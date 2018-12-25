@@ -1,12 +1,19 @@
+import beans.Account;
 import javafx.collections.ListChangeListener;
 
 import java.io.FilenameFilter;
+import java.nio.file.DirectoryStream;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
+
+@FunctionalInterface
+interface TernaryIntPredicate{
+    boolean test(int arg1, int arg2, int arg3);
+}
 
 /**
  * @author : Bruce Zhao
@@ -27,6 +34,14 @@ public class Basic {
 //        b_2_6_1();
 //        b_2_6_2();
 
+//        b_2_9();
+
+//        b_2_10();
+
+//        b_2_12(Arrays.asList());
+
+        funny();
+
         return;
     }
 
@@ -35,18 +50,97 @@ public class Basic {
      * 有趣的用法
      */
     public static void funny() {
-        Scanner scanner = new Scanner(System.in);
+        /*Scanner scanner = new Scanner(System.in);
         Arrays.stream(scanner.nextLine().split("\\s"))
                 .distinct()
                 .reduce((s1, s2) -> s1 + "-" + s2)
-                .ifPresent(System.out::println);
+                .ifPresent(System.out::println);*/
+
+
+        //todo 逆序 2.13 Comparator
+        List<String> strings = Arrays.asList("zhao", "yao", "abc", "zz");
+        strings.sort(Comparator.comparing(String::trim, Comparator.reverseOrder()));
+        System.out.println(strings);
+    }
+
+    public void test(){
+
+    }
+
+
+    /**
+     * Composing 2.11概念
+     * Write the disjunctAll method that accepts a list of IntPredicate's
+     * and returns a single IntPredicate. The result predicate is a
+     * disjunction of all input predicates.
+     * 这题disjunction是关键
+     * 0 or 0 = 0， 其他情况都是1
+     */
+    public static IntPredicate b_2_12(List<IntPredicate> predicates){
+//        1
+        /*IntPredicate resPredicate = predicates.stream().reduce(x -> false, IntPredicate::or);*/
+//        2
+        /*IntPredicate resPredicate = predicates.stream().reduce(IntPredicate::or).orElse(x -> false);*/
+//        3
+        IntPredicate resPredicate = x -> false;
+        predicates.forEach(predicate -> resPredicate.or(predicate));
+        return resPredicate;
+    }
+
+    //todo 有关位运算的使用 IntPredicate::or ::and
+
+    /**
+     * You need to write your own functional interface (TernaryIntPredicate) and
+     * use it with a lambda expression.
+     * The interface must have a single non-static (and non-default) method test
+     * with three int arguments that returns boolean value.
+     * The lambda expression has to return true if all passed values are different
+     * otherwise false.
+     */
+    public static void b_2_10(){
+//        1
+        /*TernaryIntPredicate allValuesAreDifferentPredicate = (x, y, z) -> {
+            if(x == y && x == z)
+                return true;
+            else
+                return false;
+        };*/
+
+        TernaryIntPredicate allValuesAreDifferentPredicate = (x, y, z) -> x != y && y != z && x != z;
+
+        boolean res = allValuesAreDifferentPredicate.test(1, 1, 1);
+        System.out.println(res);
+
     }
 
 
     /**
      * Behaviour parametrization with lambda expressions
+     * 1. get list with all non-empty accounts (balance > 0) and save it to the
+     * variable nonEmptyAccounts
+     * 2. get all non-locked accounts with too much money (balance >= 100 000 000)
+     * and save it to the variable accountsWithTooMuchMoney
      */
     public static void b_2_9(){
+        Account account1 = new Account("111", 100000001, false);
+        Account account2 = new Account("222", 0, false);
+        Account account3 = new Account("333", 1000, false);
+        List<Account> accounts = Arrays.asList(account1, account2, account3);
+
+//        1
+        /*List<Account> balanceOverZeroList = accounts.stream().filter(account -> account.getBalance() > 0).collect(Collectors.toList());
+        List<Account> list = accounts.stream().filter(account -> (account.getBalance() >= 100000000 && !account.isLocked())).collect(Collectors.toList());*/
+
+//        2
+        Predicate<Account> balanceOverZeroPred = (Account account) -> account.getBalance() > 0;
+        Predicate<Account> balanceTooMuchPred = (Account account) -> account.getBalance() > 100000000;
+        Predicate<Account> isLockedPred = (Account account) -> !account.isLocked();
+        List<Account> balanceOverZeroList = accounts.stream().filter(balanceOverZeroPred).collect(Collectors.toList());
+        List<Account> list = accounts.stream().filter(balanceTooMuchPred.and(isLockedPred)).collect(Collectors.toList());
+
+
+        System.out.println(balanceOverZeroList);
+        System.out.println(list);
 
     }
 

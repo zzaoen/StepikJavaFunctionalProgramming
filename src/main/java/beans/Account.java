@@ -23,6 +23,12 @@ public class Account {
         this.balance = balance;
     }
 
+    public Account(String number, long balance, boolean isLocked) {
+        this.number = number;
+        this.balance = balance;
+        this.isLocked = isLocked;
+    }
+
     public Account(String number, long balance, boolean isLocked, List<Transaction> transactions) {
         this.number = number;
         this.balance = balance;
