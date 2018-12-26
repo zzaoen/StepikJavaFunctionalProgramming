@@ -2,6 +2,7 @@ import beans.Account;
 import javafx.collections.ListChangeListener;
 
 import java.io.FilenameFilter;
+import java.math.BigInteger;
 import java.nio.file.DirectoryStream;
 import java.util.*;
 import java.util.function.*;
@@ -11,7 +12,7 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 @FunctionalInterface
-interface TernaryIntPredicate{
+interface TernaryIntPredicate {
     boolean test(int arg1, int arg2, int arg3);
 }
 
@@ -40,7 +41,17 @@ public class Basic {
 
 //        b_2_12(Arrays.asList());
 
-        funny();
+//        b_2_17(17);
+
+//        b_2_18("bad better", Arrays.asList("good", "better", "bad"));
+
+//        b_2_19(IntStream.of(2, 60, 90, 20), IntStream.of(3, 30, 35, 75));
+
+//        b_2_20(5);
+
+        b_2_21(21, 30);
+//        funny();
+
 
         return;
     }
@@ -50,6 +61,7 @@ public class Basic {
      * 有趣的用法
      */
     public static void funny() {
+        //todo 直接对输入处理
         /*Scanner scanner = new Scanner(System.in);
         Arrays.stream(scanner.nextLine().split("\\s"))
                 .distinct()
@@ -63,8 +75,118 @@ public class Basic {
         System.out.println(strings);
     }
 
-    public void test(){
 
+    /**
+     * Create a parallel LongStream for filtering prime numbers in
+     * the given range (inclusively).
+     */
+    public static LongStream b_2_31(long rangeBegin, long rangeEnd){
+        LongStream res = LongStream.rangeClosed(rangeBegin, rangeEnd)
+                .parallel()
+                .filter(x -> (x & 1) != 0);
+
+
+        return res;
+    }
+
+    /**
+     * Write a method for calculating the sum of odd numbers in the
+     * given interval (inclusively) using Stream API.
+     */
+    public static long b_2_21(long start, long end) {
+//        1
+        /*long res = LongStream.rangeClosed(start, end)
+                .filter(x -> x % 2 == 1)
+                .sum();*/
+
+//        2
+        long res = LongStream.rangeClosed(start, end)
+                .filter(x -> x % 2 == 1)
+                .reduce(0L, Long::sum);
+        System.out.println(res);
+        return res;
+    }
+
+    /**
+     * Write a method to calculate a factorial value using stream.
+     */
+    public static long b_2_20(long n) {
+//        1
+        /*long res = LongStream.rangeClosed(2, n).reduce(1L, Math::multiplyExact);*/
+
+//        2
+        long res = LongStream.rangeClosed(2, n).reduce(1L, (x, y) -> x * y);
+
+        System.out.println(res);
+        return res;
+    }
+
+
+    /**
+     * 合并stream
+     * You have two IntStream. The first stream contains even numbers
+     * and the second stream contains odd numbers. Create the third
+     * stream that contains numbers from both streams which is
+     * divisible by 3 and 5.
+     */
+    public static IntStream b_2_19(IntStream evenStream, IntStream oddStream) {
+//        1
+        /*IntStream res = IntStream.concat(evenStream, oddStream)
+                .filter(x -> x % 15 == 0)
+                .sorted()
+                .skip(2);*/
+
+//        2
+        // TODO 这里的collect不能使用Collectors.toList()
+        List<Integer> resList = evenStream.filter(x -> x % 15 == 0)
+                .collect(LinkedList::new, List::add, List::addAll);
+        resList.addAll(oddStream.filter(x -> x % 15 == 0)
+                .collect(LinkedList::new, List::add, List::addAll));
+        IntStream res = resList.stream().mapToInt(x -> x).sorted().skip(2);
+
+        res.forEach(System.out::println);
+        return res;
+    }
+
+    /**
+     * Create a stream that will detect bad words in a text according to
+     * a bad words list. All words in the text are divided by whitespaces
+     * (always only one whitespace between two words).
+     */
+
+    public static Stream<String> b_2_18(String text, List<String> badWords) {
+//        1
+//        这个是通过字符串的contains方法判断是否包含list中每一个元素
+        /*Stream<String> res = badWords.stream().filter(text::contains).sorted().distinct();*/
+
+//        2
+//        这个是将text拆分后与list中每一个元素比较
+        /*Stream<String> res = Arrays.stream(text.split("\\s")).filter(badWords::contains).sorted().distinct();*/
+
+//        3
+//        不好的处理方式
+        Stream<String> res = Arrays.stream(text.split("\\s")).filter(s -> badWords.stream().anyMatch(badWord -> badWord.equals(s))).sorted().distinct();
+
+        res.forEach(System.out::println);
+        return res;
+    }
+
+    /**
+     * Write a method using Stream API to check the input number is prime
+     * or not.
+     */
+    public static boolean b_2_17(final long number) {
+//        1
+        /*boolean res = !LongStream.range(2, number/2+1).anyMatch(x -> number % x == 0);*/
+
+//        2
+        /*boolean res = LongStream.range(2, number / 2 + 1).noneMatch(i -> number % i == 0);*/
+
+//        3
+        boolean res = new BigInteger(String.valueOf(number)).isProbablePrime(1);
+
+        System.out.println(res);
+        return res;
     }
 
 
@@ -76,7 +198,7 @@ public class Basic {
      * 这题disjunction是关键
      * 0 or 0 = 0， 其他情况都是1
      */
-    public static IntPredicate b_2_12(List<IntPredicate> predicates){
+    public static IntPredicate b_2_12(List<IntPredicate> predicates) {
 //        1
         /*IntPredicate resPredicate = predicates.stream().reduce(x -> false, IntPredicate::or);*/
 //        2
@@ -97,7 +219,7 @@ public class Basic {
      * The lambda expression has to return true if all passed values are different
      * otherwise false.
      */
-    public static void b_2_10(){
+    public static void b_2_10() {
 //        1
         /*TernaryIntPredicate allValuesAreDifferentPredicate = (x, y, z) -> {
             if(x == y && x == z)
@@ -121,7 +243,7 @@ public class Basic {
      * 2. get all non-locked accounts with too much money (balance >= 100 000 000)
      * and save it to the variable accountsWithTooMuchMoney
      */
-    public static void b_2_9(){
+    public static void b_2_9() {
         Account account1 = new Account("111", 100000001, false);
         Account account2 = new Account("222", 0, false);
         Account account3 = new Account("333", 1000, false);
@@ -150,7 +272,7 @@ public class Basic {
      * suffix (after) to its single string argument; prefix and suffix are final
      * variables and will be available in the context during testing.
      */
-    public static void b_2_6_2(){
+    public static void b_2_6_2() {
         final String prefix = "pre-", suffix = "-suf";
 //        1
         /*Function<String, String> stringFunction = s -> prefix + s.trim() + suffix;*/

@@ -9,24 +9,37 @@ import java.util.List;
  * @desc :
  */
 public class Account {
-    //2.9
+
     private String number;
     private long balance;
-    private boolean isLocked;
+    private boolean isLocked; //2.9
+
+    private List<Transaction> transactions; //2.24
+
+    private String guid;
 
 
-    private List<Transaction> transactions;
+    public Account(long balance, String guid) { //2.38
+        this.balance = balance;
+        this.guid = guid;
+    }
 
-
-    public Account(String number, long balance) {
+    public Account(String number, long balance) { //2.28
         this.number = number;
         this.balance = balance;
     }
 
-    public Account(String number, long balance, boolean isLocked) {
+    public Account(String number, long balance, boolean isLocked) { //2.9
         this.number = number;
         this.balance = balance;
         this.isLocked = isLocked;
+    }
+
+
+    public Account(String number, long balance, List<Transaction> transactions) { //2.24
+        this.number = number;
+        this.balance = balance;
+        this.transactions = transactions;
     }
 
     public Account(String number, long balance, boolean isLocked, List<Transaction> transactions) {

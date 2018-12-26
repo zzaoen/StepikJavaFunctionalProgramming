@@ -14,7 +14,7 @@ public class Transaction {
     private String created;
     private Account account;
 
-    public Transaction(String uuid, long sum, Account account) {
+    public Transaction(String uuid, long sum, Account account) { //2.28
         this.uuid = uuid;
         this.sum = sum;
         this.account = account;
