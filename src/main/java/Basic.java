@@ -11,10 +11,7 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
-@FunctionalInterface
-interface TernaryIntPredicate {
-    boolean test(int arg1, int arg2, int arg3);
-}
+
 
 /**
  * @author : Bruce Zhao
@@ -27,6 +24,8 @@ public class Basic {
     public static void main(String[] args) {
 //        b_2_2_1();
 //        b_2_2_2();
+
+        b_2_3();
 
 //        b_2_4();
 
@@ -49,7 +48,8 @@ public class Basic {
 
 //        b_2_20(5);
 
-        b_2_21(21, 30);
+//        b_2_21(21, 30);
+
 //        funny();
 
 
@@ -136,6 +136,7 @@ public class Basic {
                 .sorted()
                 .skip(2);*/
 
+
 //        2
         // TODO 这里的collect不能使用Collectors.toList()
         List<Integer> resList = evenStream.filter(x -> x % 15 == 0)
@@ -164,7 +165,6 @@ public class Basic {
         /*Stream<String> res = Arrays.stream(text.split("\\s")).filter(badWords::contains).sorted().distinct();*/
 
 //        3
-//        不好的处理方式
         Stream<String> res = Arrays.stream(text.split("\\s")).filter(s -> badWords.stream().anyMatch(badWord -> badWord.equals(s))).sorted().distinct();
 
         res.forEach(System.out::println);
@@ -212,8 +212,7 @@ public class Basic {
     //todo 有关位运算的使用 IntPredicate::or ::and
 
     /**
-     * You need to write your own functional interface (TernaryIntPredicate) and
-     * use it with a lambda expression.
+     * Write your own functional interface (TernaryIntPredicate) and use it with a lambda expression.
      * The interface must have a single non-static (and non-default) method test
      * with three int arguments that returns boolean value.
      * The lambda expression has to return true if all passed values are different
@@ -250,15 +249,22 @@ public class Basic {
         List<Account> accounts = Arrays.asList(account1, account2, account3);
 
 //        1
-        /*List<Account> balanceOverZeroList = accounts.stream().filter(account -> account.getBalance() > 0).collect(Collectors.toList());
-        List<Account> list = accounts.stream().filter(account -> (account.getBalance() >= 100000000 && !account.isLocked())).collect(Collectors.toList());*/
+        /*List<Account> balanceOverZeroList = accounts.stream()
+                .filter(account -> account.getBalance() > 0)
+                .collect(Collectors.toList());
+        List<Account> list = accounts.stream()
+                .filter(account -> (account.getBalance() >= 100000000 && !account.isLocked()))
+                .collect(Collectors.toList());*/
 
 //        2
         Predicate<Account> balanceOverZeroPred = (Account account) -> account.getBalance() > 0;
         Predicate<Account> balanceTooMuchPred = (Account account) -> account.getBalance() > 100000000;
         Predicate<Account> isLockedPred = (Account account) -> !account.isLocked();
-        List<Account> balanceOverZeroList = accounts.stream().filter(balanceOverZeroPred).collect(Collectors.toList());
-        List<Account> list = accounts.stream().filter(balanceTooMuchPred.and(isLockedPred)).collect(Collectors.toList());
+        List<Account> balanceOverZeroList = accounts.stream()
+                .filter(balanceOverZeroPred).collect(Collectors.toList());
+        List<Account> list = accounts.stream()
+                .filter(balanceTooMuchPred.and(isLockedPred))
+                .collect(Collectors.toList());
 
 
         System.out.println(balanceOverZeroList);
@@ -297,7 +303,7 @@ public class Basic {
         double res = operator.applyAsDouble(1);
         System.out.println(res);
     }
-//todo operator是接收一个或者两个，然后有返回值
+//todo operator是接收一个或者两个，然后有返回值; Function也是接收并返回值
 
 
     /**
@@ -321,18 +327,21 @@ public class Basic {
     /**
      * Write a lambda expression that accepts two long arguments as a range
      * borders and calculates (returns) production of all numbers in this
-     * range (inclusively)
+     * range (inclusively).
      */
     public static void b_2_4() {
 //        1
-        /*LongBinaryOperator operator = (x, y) -> LongStream.rangeClosed(x, y).reduce(1L, Math::multiplyExact);*/
+        /*LongBinaryOperator operator = (x, y) -> LongStream.rangeClosed(x, y)
+                .reduce(1L, Math::multiplyExact);*/
 
 //        2
-        /*LongBinaryOperator operator = (x, y) -> LongStream.rangeClosed(x, y).reduce(1L, (acc, temp) -> acc * temp);*/
+        /*LongBinaryOperator operator = (x, y) -> LongStream.rangeClosed(x, y)
+                .reduce(1L, (acc, temp) -> acc * temp);*/
+
 
 //        3
         LongBinaryOperator operator = (x, y) -> {
-            int res = 1;
+            long res = 1;
             while (x < y)
                 res *= y--;
             return res;
@@ -343,9 +352,17 @@ public class Basic {
 
 
     /**
-     * Write a lambda expression that accepts a long value and returns a next even number.
+     * Write a lambda expression that accepts seven (!) string arguments and returns a string
+     * in upper case concatenated from all of them (in the order of arguments).
      */
+
     public static void b_2_3() {
+
+
+//        SevenArgsFunction test_b_2_3 = (String a, String b, String c, String d, String e, String f, String g) -> (a + b + c + d + e + f + g).toUpperCase();
+        SevenArgsFunction<String, String, String, String, String, String, String, String> function = (a, b, c, d, e, f, g) -> (a + b + c + d + e + f + g).toUpperCase();
+        String res = function.apply("a", "b", "c", "d", "e", "f", "g");
+        System.out.println(res);
 
 //        1
         /*(a, b, c, d, e, f, g) -> (a + b + c + d + e + f + g).toUpperCase();*/
@@ -367,6 +384,8 @@ public class Basic {
             while(++x % 2 != 0);
             return x;
         };*/
+
+
 
 //        2
         /*IntUnaryOperator operator = x -> x + 2 - (x % 2);*/
@@ -391,4 +410,14 @@ public class Basic {
     }
 
 
+}
+
+@FunctionalInterface
+interface SevenArgsFunction<A, B, C, D, E, F, G, R>{
+    R apply(A a, B b, C c, D d, E e, F f, G g);
+}
+
+@FunctionalInterface
+interface TernaryIntPredicate {
+    boolean test(int arg1, int arg2, int arg3);
 }

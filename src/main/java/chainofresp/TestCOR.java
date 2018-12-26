@@ -6,7 +6,7 @@ package chainofresp;
  * @date : 2018/12/26 10:46
  * @desc : https://stepik.org/lesson/46943/step/2?unit=24990
  */
-public class CORTest {
+public class TestCOR {
 
     public static void main(String[] args) {
 

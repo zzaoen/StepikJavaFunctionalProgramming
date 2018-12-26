@@ -53,18 +53,10 @@ public class TestFlatMap {
                 .flatMap(account -> account.getTransactions().stream())
                 .filter(transaction -> transaction.getState().equals("CANCELED"))
                 .mapToLong(Transaction::getSum)
-                .sum();
-        System.out.println(res);*/
+                .sum(); //.reduce(0L, Long::sum);
+                */
 
 //        2
-        /*long res = accounts.stream()
-                .filter(account -> account.getBalance() > 0)
-                .flatMap(account -> account.getTransactions().stream())
-                .filter(transaction -> transaction.getState().equals("CANCELED"))
-                .map(Transaction::getSum)
-                .reduce(0L, Long::sum);*/
-
-//        3
         //todo flatMapToLong
         long res = accounts.stream()
                 .filter(account -> account.getBalance() > 0)

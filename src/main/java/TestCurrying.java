@@ -68,6 +68,7 @@ public class TestCurrying {
                 }
                 resList.add(i);
             }
+            //todo 为什么返回的是一个list? 因为UnaryOperator接收一个类型并返回同一个类型。
             return resList;
         };*/
 
@@ -78,6 +79,7 @@ public class TestCurrying {
                         .get()
                         .applyAsInt(x))
                 .collect(Collectors.toList());
+
 
 
         UnaryOperator<List<Integer>> identityTransformation = multifunctionalMapper.apply(Arrays.asList(x -> x, x -> x));
