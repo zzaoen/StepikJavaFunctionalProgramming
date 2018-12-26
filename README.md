@@ -1,8 +1,9 @@
-### Stepik Java Functional Programming
+## Stepik Java Functional Programming
 https://stepik.org/course/1595
 
-### 目录
-#### 基础题
+
+
+### 基础题
 
 **Basic.java**
 
@@ -335,7 +336,7 @@ LongStream res = LongStream.rangeClosed(rangeBegin, rangeEnd)
 
 
 
-#### chain of responsibility 
+### chain of responsibility 
 
 **./chainofresp/TestCOR.java**
 
@@ -343,7 +344,7 @@ LongStream res = LongStream.rangeClosed(rangeBegin, rangeEnd)
 
 
 
-#### stream operations 
+### stream operations 
 
 2.15 knowledge of stream operations
 **intermediate**:  always lazy and return a new stream
@@ -354,7 +355,7 @@ e.g.: average, max, reduce, anyMatch, collect, count
 
 
 
-#### flatmap
+### flatmap
 
 **TestFlatMap.java**
 
@@ -431,7 +432,7 @@ long res = accounts.stream()
 
 
 
-#### Collectors
+### Collectors
 
 **TestCollectors.java**
 
@@ -511,7 +512,7 @@ Map<String, Long> res = logs.stream()
 
 
 
-#### Curry
+### Curry
 
 **TestCurry.java**
 
@@ -593,20 +594,90 @@ UnaryOperator<List<Integer>> squareAndThenGetNextEvenNumberTransformation =
                 multifunctionalMapper.apply(Arrays.asList(x -> x * x, x -> x + 2 - (x % 2)));
 ```
 
+2.35 
+
+**reduceIntOperator** accepts an initial value (seed) and a combiner function and then returns a new function that combines all values in the given integer range (inclusively) into one integer value (it's a simple form of reduction).  
+
+**sumOperator**: summing integer values in the given range. 
+
+**productOperator**  : multiplying integer values in the given range.  
+
+```java
+BiFunc
+tion<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator = (seed, operator) -> (left, right) -> IntStream.rangeClosed(left, right).reduce(seed, operator);
+
+IntBinaryOperator sumOperator = reduceIntOperator.apply(0, Integer::sum);
+IntBinaryOperator productOperator = reduceIntOperator.apply(1, Math::multiplyExact);
+```
 
 
 
 
+### monad
 
-#### monad
+**TestMonad.java**
 
+2.36 Understanding monads and related things 
 
-2.36
-monad:
-It has a function unit(or pure): takes a value and return a monad wrapping the value
-It has a function bind(or flatMap): takes a function that (the function) accepts a value and returning a monad
-Monad is a structure that puts a value in a computational context
-
+- It has a function unit(or pure): takes a value and return a monad wrapping the value
+- It has a function bind(or flatMap): takes a function that (the function) accepts a value and returning a monad
+- Monad is a structure that puts a value in a computational context
 
 In practice we'll often use an additional method **map** that may be defined as combination of bind and unit. 
 map: takes a function that (the function) accepts a value and returns a value.
+
+Java8中现有的monads：
+
+- Stream
+
+- CompletableFuture
+
+- Optional
+
+  
+
+
+
+2.38.1 The method findUserByLogin(String login) that returns an optional value of type Optional<User>.
+
+```java
+public static Optional<User> findUserByLogin(String login) {
+    //# 1
+    Optional<User> res = Optional.empty();
+	for(User user : users){
+        if(login.equals(user.getLogin())) {
+            res = Optional.ofNullable(user);
+            break;
+        }
+    }
+    //# 2
+    Optional<User> res = users.stream().
+                filter(user -> login.equals(user.getLogin())) //filter(user -> Objects.equals(user.getLogin(), login))
+                .findFirst();
+    return res;
+}
+```
+
+
+
+2.38.2 Using the method you wrote for finding an user by their login, write a new method printBalanceIfNotEmpty(String userLogin)that prints an account balance for an existing user if `balance > 0`.
+
+```java
+public static void printBalanceIfNotEmpty(String userLogin) {
+        //# 1
+        findUserByLogin(userLogin).ifPresent(x -> {
+            if(x.getAccount() == null)
+                return;
+            if(x.getAccount().getBalance() > 0)
+                System.out.println(x.getLogin() + ": " + x.getAccount().getBalance());
+        });
+
+        //# 2
+        findUserByLogin(userLogin)
+                .map(User::getAccount)
+                .map(Account::getBalance)
+                .filter(balance -> balance > 0)
+                .ifPresent(balance -> System.out.println(userLogin + ": " + balance));
+    }
+```
+

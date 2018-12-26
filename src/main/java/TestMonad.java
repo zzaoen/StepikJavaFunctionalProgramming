@@ -21,7 +21,7 @@ public class TestMonad {
     public static Set<User> users = new HashSet<>();
 
     /**
-     * 2.39
+     * 2.38.2
      * Using the method you wrote for finding an user by their login, write a new
      * method printBalanceIfNotEmpty(String userLogin)that prints an account
      * balance for an existing user if `balance > 0`.
@@ -45,7 +45,7 @@ public class TestMonad {
 
 
     /**
-     * 2.38
+     * 2.38.1
      * The method findUserByLogin(String login) that returns an optional value of type Optional<User>. I
      */
     public static Optional<User> findUserByLogin(String login) {
