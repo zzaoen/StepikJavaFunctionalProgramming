@@ -1,11 +1,10 @@
-## Stepik Java Functional Programming
-https://stepik.org/course/1595
+## Stepik——Java Functional Programming
+课程地址：https://stepik.org/course/1595
+代码地址：https://github.com/zzaoen/StepikJavaFunctionalProgramming
 
+### 简单题
 
-
-### 基础题
-
-**Basic.java**
+**Basic.java**（在仓库中，Basic.java文件中包含了这些方法的实现）
 
 2.2.1 Write a lambda expression that accepts two integers arguments and returns max of them. 
 
@@ -31,7 +30,7 @@ IntUnaryOperator operator = x -> (x | 1) + 1;
 
 2.3 Write a lambda expression that accepts seven (!) string arguments and returns a string in upper case concatenated from all of them (in the order of arguments).
 
- ```java
+```java
 # 1
 (a, b, c, d, e, f, g) -> (a + b + c + d + e + f + g).toUpperCase();
 
@@ -39,7 +38,7 @@ IntUnaryOperator operator = x -> (x | 1) + 1;
 (a, b, c, d, e, f, g) -> Stream.of(a, b, c, d, e, f, g)
     .reduce("", String::concat)
     .toUpperCase();
- ```
+```
 
 在Java中没有现成可以接受7个字符串并返回1个字符串的方法，不过我们可以手动写一个函数式接口满足这个条件。
 
@@ -89,13 +88,12 @@ Function<List<String>, List<String>> listFunction = strings -> new ArrayList(new
 
 
 
-2.6.1 Using closure write a lambda expression that calculates a∗x2+b∗x+c where a, b, c are context final variables. Note, the result is double
+2.6.1 Using closure write a lambda expression that calculates a∗x2+b∗x+c where a, b, c are context final variables. Note, the result is double.
 
 ```java
 //final int a = 1, b = 2, c = 3;
 DoubleUnaryOperator operator = x -> a * x * x + b * x + c;
 ```
-
 
 
 **Note**
@@ -121,7 +119,7 @@ Function<String, String> stringFunction = s -> String.join("", prefix, s.trim(),
 
 
 
-2.9 Behaviour parametrization with lambda expressions. 1. get list with all non-empty accounts (balance > 0) and save it to the variable nonEmptyAccounts; 2. get all non-locked accounts with too much money (balance >= 100 000 000) and save it to the variable accountsWithTooMuchMoney
+2.9 Behaviour parametrization with lambda expressions. 1. get list with all non-empty accounts (balance > 0) and save it to the variable nonEmptyAccounts; 2. get all non-locked accounts with too much money (balance >= 100 000 000) and save it to the variable accountsWithTooMuchMoney.
 
 ```java
 //Account account1 = new Account("111", 100000001, false);
@@ -329,12 +327,6 @@ LongStream res = LongStream.rangeClosed(rangeBegin, rangeEnd)
                 .parallel()
                 .filter(x -> (x & 1) != 0);
 ```
-
-
-
-
-
-
 
 ### chain of responsibility 
 
@@ -555,14 +547,12 @@ function.apply("aa").apply("bb").apply("cc").apply("dd");
 Write three functions:
 
 1. identityTransformation repeats identity transformation three times just for example.
-
 2. multTwoAndThenAddOneTransformation multiplies by two each integer number and then add one to its.
-
 3. squareAndThenGetNextEvenNumberTransformation quares each integer number and then calculates the next even number following it
-An input list with integer numbers [1, 2, 3].
-identityTransformation returns the result list [1, 2, 3].
-multTwoAndThenAddOneTransformation returns the result list [3, 5, 7].
-squareAndThenGetNextEvenNumberTransformation returns the result list [2, 6, 10].
+   An input list with integer numbers [1, 2, 3].
+   identityTransformation returns the result list [1, 2, 3].
+   multTwoAndThenAddOneTransformation returns the result list [3, 5, 7].
+   squareAndThenGetNextEvenNumberTransformation returns the result list [2, 6, 10].
 
 ```java
 # 1
@@ -600,7 +590,7 @@ UnaryOperator<List<Integer>> squareAndThenGetNextEvenNumberTransformation =
 
 **sumOperator**: summing integer values in the given range. 
 
-**productOperator**  : multiplying integer values in the given range.  
+**productOperator**  : multiplying integer values in the given range.  
 
 ```java
 BiFunc
@@ -609,7 +599,6 @@ tion<Integer, IntBinaryOperator, IntBinaryOperator> reduceIntOperator = (seed, o
 IntBinaryOperator sumOperator = reduceIntOperator.apply(0, Integer::sum);
 IntBinaryOperator productOperator = reduceIntOperator.apply(1, Math::multiplyExact);
 ```
-
 
 
 
@@ -634,7 +623,6 @@ Java8中现有的monads：
 
 - Optional
 
-  
 
 
 
@@ -680,4 +668,3 @@ public static void printBalanceIfNotEmpty(String userLogin) {
                 .ifPresent(balance -> System.out.println(userLogin + ": " + balance));
     }
 ```
-
